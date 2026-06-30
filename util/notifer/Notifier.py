@@ -283,6 +283,28 @@ class NotifierManager:
             except Exception as e:
                 loguru.logger.error(f"Audio创建失败: {e}")
 
+        # SMS (阿里云短信)
+        if config.sms_phone_numbers and config.sms_template_code:
+            try:
+                from util.notifer.SmsUtil import SmsNotifier
+
+                notifier = SmsNotifier(
+                    access_key_id=config.sms_access_key_id,
+                    access_key_secret=config.sms_access_key_secret,
+                    sign_name=config.sms_sign_name,
+                    template_code=config.sms_template_code,
+                    phone_numbers=config.sms_phone_numbers,
+                    title=title,
+                    content=content,
+                    interval_seconds=interval_seconds,
+                    duration_minutes=duration_minutes,
+                )
+                manager.register_notifier("SMS", notifier)
+            except ImportError as e:
+                loguru.logger.error(f"SMS导入失败: {e}")
+            except Exception as e:
+                loguru.logger.error(f"SMS创建失败: {e}")
+
         return manager
 
     @staticmethod
@@ -310,6 +332,12 @@ class NotifierManager:
         ]
         if include_audio:
             test_cases.append(("Audio", config.audio_path, "音频通知"))
+
+        # SMS
+        if config.sms_phone_numbers and config.sms_template_code:
+            test_cases.append(
+                ("SMS", config.sms_phone_numbers, "阿里云短信")
+            )
 
         for notifier_name, config_value, display_name in test_cases:
             if not config_value:

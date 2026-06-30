@@ -155,6 +155,26 @@ def go_settings_tab(header_ui):
         gr.Info("提示音已保存。")
         return gr.update(value=ConfigDB.get("audioPath"))
 
+    def inner_input_sms_access_key_id(x):
+        ConfigDB.insert("smsAccessKeyId", x)
+        return gr.update(value=ConfigDB.get("smsAccessKeyId"))
+
+    def inner_input_sms_access_key_secret(x):
+        ConfigDB.insert("smsAccessKeySecret", x)
+        return gr.update(value=ConfigDB.get("smsAccessKeySecret"))
+
+    def inner_input_sms_sign_name(x):
+        ConfigDB.insert("smsSignName", x)
+        return gr.update(value=ConfigDB.get("smsSignName"))
+
+    def inner_input_sms_template_code(x):
+        ConfigDB.insert("smsTemplateCode", x)
+        return gr.update(value=ConfigDB.get("smsTemplateCode"))
+
+    def inner_input_sms_phone_numbers(x):
+        ConfigDB.insert("smsPhoneNumbers", x)
+        return gr.update(value=ConfigDB.get("smsPhoneNumbers"))
+
     def test_terminal_audio():
         audio_path = ConfigDB.get("audioPath")
         if not audio_path:
@@ -548,6 +568,38 @@ def go_settings_tab(header_ui):
                         interactive=True,
                         info="https://www.chuckfang.com/MeoW/api_doc.html",
                     )
+                    gr.Markdown("#### 阿里云短信")
+                    sms_phone_numbers_ui = gr.Textbox(
+                        value=ConfigDB.get("smsPhoneNumbers") or "",
+                        label="接收手机号｜输入完成后，回车键保存",
+                        interactive=True,
+                        info="多个手机号用逗号分隔，例如: 13800138000,13900139000",
+                    )
+                    sms_sign_name_ui = gr.Textbox(
+                        value=ConfigDB.get("smsSignName") or "",
+                        label="短信签名｜输入完成后，回车键保存",
+                        interactive=True,
+                        info="需在阿里云短信控制台审核通过",
+                    )
+                    sms_template_code_ui = gr.Textbox(
+                        value=ConfigDB.get("smsTemplateCode") or "",
+                        label="短信模板代码｜输入完成后，回车键保存",
+                        interactive=True,
+                        info="例如: SMS_123456789，模板需包含 ${title} 和 ${content} 变量",
+                    )
+                    sms_access_key_id_ui = gr.Textbox(
+                        value=ConfigDB.get("smsAccessKeyId") or "",
+                        label="AccessKey ID｜输入完成后，回车键保存",
+                        interactive=True,
+                        info="阿里云 RAM 用户 AccessKey ID",
+                    )
+                    sms_access_key_secret_ui = gr.Textbox(
+                        value=ConfigDB.get("smsAccessKeySecret") or "",
+                        label="AccessKey Secret｜输入完成后，回车键保存",
+                        interactive=True,
+                        type="password",
+                        info="阿里云 RAM 用户 AccessKey Secret",
+                    )
                     gr.Markdown("#### Ntfy")
                     ntfy_ui = gr.Textbox(
                         value=ConfigDB.get("ntfyUrl") or "",
@@ -739,6 +791,31 @@ def go_settings_tab(header_ui):
     pushplus_ui.submit(fn=inner_input_pushplus, inputs=pushplus_ui, outputs=pushplus_ui)
     bark_ui.submit(fn=inner_input_bark, inputs=bark_ui, outputs=bark_ui)
     meow_ui.submit(fn=inner_input_meow, inputs=meow_ui, outputs=meow_ui)
+    sms_phone_numbers_ui.submit(
+        fn=inner_input_sms_phone_numbers,
+        inputs=sms_phone_numbers_ui,
+        outputs=sms_phone_numbers_ui,
+    )
+    sms_sign_name_ui.submit(
+        fn=inner_input_sms_sign_name,
+        inputs=sms_sign_name_ui,
+        outputs=sms_sign_name_ui,
+    )
+    sms_template_code_ui.submit(
+        fn=inner_input_sms_template_code,
+        inputs=sms_template_code_ui,
+        outputs=sms_template_code_ui,
+    )
+    sms_access_key_id_ui.submit(
+        fn=inner_input_sms_access_key_id,
+        inputs=sms_access_key_id_ui,
+        outputs=sms_access_key_id_ui,
+    )
+    sms_access_key_secret_ui.submit(
+        fn=inner_input_sms_access_key_secret,
+        inputs=sms_access_key_secret_ui,
+        outputs=sms_access_key_secret_ui,
+    )
     ntfy_ui.submit(fn=inner_input_ntfy, inputs=ntfy_ui, outputs=ntfy_ui)
     ntfy_username_ui.submit(
         fn=inner_input_ntfy_username,
@@ -878,6 +955,11 @@ def go_settings_tab(header_ui):
             gr.update(value=ConfigDB.get("pushplusToken") or ""),
             gr.update(value=ConfigDB.get("barkToken") or ""),
             gr.update(value=ConfigDB.get("meowNickname") or ""),
+            gr.update(value=ConfigDB.get("smsPhoneNumbers") or ""),
+            gr.update(value=ConfigDB.get("smsSignName") or ""),
+            gr.update(value=ConfigDB.get("smsTemplateCode") or ""),
+            gr.update(value=ConfigDB.get("smsAccessKeyId") or ""),
+            gr.update(value=ConfigDB.get("smsAccessKeySecret") or ""),
             gr.update(value=ConfigDB.get("ntfyUrl") or ""),
             gr.update(value=ConfigDB.get("ntfyUsername") or ""),
             gr.update(value=ConfigDB.get("ntfyPassword") or ""),
@@ -921,6 +1003,11 @@ def go_settings_tab(header_ui):
         pushplus_ui,
         bark_ui,
         meow_ui,
+        sms_phone_numbers_ui,
+        sms_sign_name_ui,
+        sms_template_code_ui,
+        sms_access_key_id_ui,
+        sms_access_key_secret_ui,
         ntfy_ui,
         ntfy_username_ui,
         ntfy_password_ui,
